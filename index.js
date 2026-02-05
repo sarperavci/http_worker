@@ -56,8 +56,9 @@ const server = http.createServer(async (req, res) => {
         const headersObject = {};
         Object.keys(req.headers).forEach(key => {
             const keyLower = key.toLowerCase();
-            if (keyLower !== 'x-forwarded-for' &&
-                keyLower !== 'x-forwarded-by' &&
+            if (!keyLower.startsWith('cf-') &&
+                !keyLower.startsWith('x-forwarded') &&
+                !keyLower.startsWith('cdn-') &&
                 keyLower !== 'x-hostname' &&
                 keyLower !== 'host') {
                 headersObject[key] = req.headers[key];
@@ -66,8 +67,18 @@ const server = http.createServer(async (req, res) => {
 
         headersObject['host'] = targetUrlObj.hostname;
 
-        if (!headersObject['origin']) {
+        if (headersObject['origin']) {
             headersObject['origin'] = targetUrlObj.origin;
+        }
+
+        if (headersObject['referer'] || headersObject['referrer']) {
+            const refererKey = headersObject['referer'] ? 'referer' : 'referrer';
+            try {
+                const refererUrl = new URL(headersObject[refererKey]);
+                headersObject[refererKey] = targetUrlObj.origin + refererUrl.pathname + refererUrl.search + refererUrl.hash;
+            } catch (e) {
+                // invalid referer URL, skip replacement
+            }
         }
 
         const options = {
