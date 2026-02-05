@@ -39,3 +39,9 @@ docker compose build
 ```bash
 docker compose up -d
 ```
+
+## run from public repo
+
+```bash
+docker run -d -p 8888:3000 ghcr.io/sarperavci/http_worker:latest
+```
