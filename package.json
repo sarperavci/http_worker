@@ -1,0 +1,13 @@
+{
+  "name": "http_worker",
+  "version": "1.0.0",
+  "description": "path-preserving proxy server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["proxy", "http"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}
